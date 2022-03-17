@@ -102,3 +102,34 @@ div p button {
   width: 50%;
   margin-top: 20px;
 }
+
+ul {
+  width: 100%;
+  text-align: center;
+  margin-top: 2vh;
+  background-color: #f9fafb;
+  padding: 2vh 0px;
+}
+
+ul li {
+  padding: 15px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top: #eeeeee 1px solid;
+  flex-flow: column nowrap;
+}
+
+ul li:first-child {
+  border-top: none;
+}
+
+ul li #missedQ {
+  font-size: 12pt;
+  font-family: monospace;
+}
+
+ul li #missedA {
+  font-size: 12pt;
+  font-family: monospace;
+}

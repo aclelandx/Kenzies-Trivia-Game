@@ -2,6 +2,14 @@ if (window.localStorage.getItem(`Correct`) == null) {
     window.localStorage.setItem(`Correct`, 0);
     window.localStorage.setItem(`Total-Questions`, 0);
 }
+let missedQuestionsList = [];
+let questionsAsked = [];
+
+if (window.localStorage.getItem(`Missed-Questions`) == null) {
+    window.localStorage.setItem(`Missed-Questions`, JSON.stringify(missedQuestionsList));
+    window.localStorage.setItem(`Question-Asked`, JSON.stringify(questionsAsked));
+}
+
 const body = document.querySelector(`body`);
 const options = document.getElementById(`button-group`);
 const currentQuestion = document.getElementById(`question`);
@@ -10,6 +18,7 @@ const correctAnswers = document.getElementById(`correct`);
 const accuracy = document.getElementById(`accuracy`);
 const container = document.querySelector(`#container`)
 const clear = document.getElementById(`clear`);
+const $ul = document.querySelector(`ul`);
 let selectedAnswer = document.querySelector(`.selected`);
 let beginButton = document.querySelector(`[data-begin="start"]`);
 let correctNumber = localStorage.getItem(`Correct`);
@@ -23,6 +32,7 @@ clear.addEventListener(`click`, function () {
     window.localStorage.clear();
     document.location.reload();
 });
+
 
 // curl this url for a new session token https://opentdb.com/api_token.php?command=request
 
@@ -38,15 +48,10 @@ function trivia() {
         .then(function (data) {
             let triviaObject = data.results[0];
             currentQuestion.innerHTML = triviaObject.question;
-            let triviaQuestion = [
-                triviaObject.correct_answer,
-                triviaObject.incorrect_answers[0],
-                triviaObject.incorrect_answers[1],
-                triviaObject.incorrect_answers[2]
-            ];
+            let triviaQuestion = [triviaObject.correct_answer, triviaObject.incorrect_answers[0], triviaObject.incorrect_answers[1], triviaObject.incorrect_answers[2]];
             correctChoice = data.results[0].correct_answer;
             for (let i = 0; i < 4; i++) {
-                let answerChoices = Math.floor(Math.random() * triviaQuestion.length);
+                let answerChoices = Math.floor(Math.random() * triviaQuestion.length); // math random rolls a .25 * 4 == [1] 
                 let answers = document.createElement(`button`);
                 answers.setAttribute(`class`, `options`)
                 answers.innerHTML = triviaQuestion[answerChoices];
@@ -67,7 +72,7 @@ function trivia() {
         selectedAnswer = document.querySelector(`.selected`);
         return selectedAnswer;
     });
-}
+};
 
 beginButton.addEventListener(`click`, function () {
     let submitButton = document.createElement(`button`)
@@ -96,11 +101,25 @@ function checkAnswer() {
         totalQuestions.textContent = totalQuestionsCount;
         accuracy.textContent = Math.round(correctNumber / totalQuestionsCount * 100);
         console.log(correctChoice);
+        showIncorrectAnswers(totalQuestionsCount, currentQuestion.textContent, correctChoice);
         trivia();
     }
+};
 
-}
+function showIncorrectAnswers(x, y, z) {
+    let wrongInput = {
+        num: x,
+        ques: y,
+        ans: z,
+    }
+    $ul.innerHTML = ``;
 
-
-
-
+    let missedQuestionArray = JSON.parse(window.localStorage.getItem(`Missed-Questions`));
+    missedQuestionArray.push(wrongInput);
+    for (let i = 0; i < missedQuestionArray.length; i++) {
+        let wrong = document.createElement(`li`);
+        wrong.innerHTML = `Question#${missedQuestionArray[i].num} <span id="missedQ">${missedQuestionArray[i].ques}</span><span id="missedA">Correct Answer:${missedQuestionArray[i].ans}</span>`;
+        $ul.appendChild(wrong);
+    }
+    window.localStorage.setItem(`Missed-Questions`, JSON.stringify(missedQuestionArray));
+};
