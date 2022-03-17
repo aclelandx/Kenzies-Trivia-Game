@@ -115,7 +115,7 @@ function showIncorrectAnswers(x, y, z) {
     $ul.innerHTML = ``;
 
     let missedQuestionArray = JSON.parse(window.localStorage.getItem(`Missed-Questions`));
-    missedQuestionArray.push(wrongInput);
+    missedQuestionArray.unshift(wrongInput);
     for (let i = 0; i < missedQuestionArray.length; i++) {
         let wrong = document.createElement(`li`);
         wrong.innerHTML = `Question#${missedQuestionArray[i].num} <span id="missedQ">${missedQuestionArray[i].ques}</span><span id="missedA">Correct Answer:${missedQuestionArray[i].ans}</span>`;
